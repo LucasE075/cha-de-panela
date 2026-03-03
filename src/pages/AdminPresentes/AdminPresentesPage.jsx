@@ -10,7 +10,7 @@ import { useConfiguracoes } from '../../hooks/useConfiguracoes'
 
 const TIPOS = [
   { value: 'fisico', label: 'Físico' },
-  { value: 'pix_fechado', label: 'PIX fechado (valor definido)' },
+  { value: 'pix_fixo', label: 'PIX fixo (valor definido)' },
   { value: 'pix_livre', label: 'PIX livre (valor escolhido pelo convidado)' }
 ]
 
@@ -23,7 +23,7 @@ export default function AdminPresentesPage() {
 
   const [presentes, setPresentes] = useState([])
   const [busca, setBusca] = useState('')
-  const [filtroTipo, setFiltroTipo] = useState('todos') // todos | fisico | pix_fechado | pix_livre
+  const [filtroTipo, setFiltroTipo] = useState('todos') // todos | fisico | pix_fixo | pix_livre
 
   const [form, setForm] = useState({
     id: null,
@@ -102,19 +102,19 @@ export default function AdminPresentesPage() {
       return
     }
 
-    // regra: valor só faz sentido no pix_fechado (você pode manter em físico se quiser)
+    // regra: valor só faz sentido no pix_fixo (você pode manter em físico se quiser)
     const valorNum =
       form.valor === '' ? null : Number(form.valor)
 
-    if (form.tipo === 'pix_fechado' && (valorNum == null || Number.isNaN(valorNum))) {
-      alert('Para PIX fechado, informe um valor válido.')
+    if (form.tipo === 'pix_fixo' && (valorNum == null || Number.isNaN(valorNum))) {
+      alert('Para PIX fixo, informe um valor válido.')
       return
     }
 
     const payload = {
       nome: form.nome.trim(),
       tipo: form.tipo,
-      valor: form.tipo === 'pix_fechado' ? valorNum : null,
+      valor: form.tipo === 'pix_fixo' ? valorNum : null,
       descricao: form.descricao.trim() || null,
       cor: form.cor || '#c59d5f',
       imagem_url: form.imagem_url.trim() || null,
@@ -209,8 +209,8 @@ export default function AdminPresentesPage() {
             value={form.valor}
             onChange={e => setForm({ ...form, valor: e.target.value })}
             style={styles.input}
-            disabled={salvando || form.tipo !== 'pix_fechado'}
-            placeholder={form.tipo === 'pix_fechado' ? 'Ex: 150' : '—'}
+            disabled={salvando || form.tipo !== 'pix_fixo'}
+            placeholder={form.tipo === 'pix_fixo' ? 'Ex: 150' : '—'}
           />
         </label>
 

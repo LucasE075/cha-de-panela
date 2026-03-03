@@ -5,7 +5,7 @@ import { useConvidado } from '../../hooks/useConvidado'
 import { useConfiguracoes } from '../../hooks/useConfiguracoes'
 import { atualizarPresenca } from '../../services/convidados.service'
 import { resolveUI, textValue, scaleClass, styleClass } from '../../ui/resolveUI'
-import { designColors, designSpacing, designRadius } from '../../ui/designSystem'
+import { designColors, designSpacing, designRadius, designDimensions } from '../../ui/designSystem'
 
 export default function ConfirmacaoPage() {
   const navigate = useNavigate()
@@ -46,9 +46,9 @@ export default function ConfirmacaoPage() {
   }
 
   return (
-    <div style={makeStyles(ui.design).container}>
-      <div style={makeStyles(ui.design).content}>
-        <div style={makeStyles(ui.design).titleWrapper}>
+    <div style={makeStyles(ui).container}>
+      <div style={makeStyles(ui).content}>
+        <div style={makeStyles(ui).titleWrapper}>
           <h1
             className={`txt-title ${styleClass(ui.textos?.pergunta)} ${scaleClass(ui.textos?.pergunta)}`}
             style={{ color: ui.textos?.pergunta?.color || ui.tema.corPrimaria }}
@@ -60,7 +60,7 @@ export default function ConfirmacaoPage() {
           </h1>
         </div>
 
-        <div style={makeStyles(ui.design).botoes}>
+        <div style={makeStyles(ui).botoes}>
           <button
             onClick={() => responder(true)}
             disabled={salvando}
@@ -82,7 +82,7 @@ export default function ConfirmacaoPage() {
             disabled={salvando}
             className={`${styleClass(ui.textos?.botaoNao)} ${scaleClass(ui.textos?.botaoNao)}`}
             style={{
-              ...makeStyles(ui.design).botaoSecundario,
+              ...makeStyles(ui).botaoSecundario,
               color: ui.textos?.botaoNao?.color || '#333',
               opacity: salvando ? 0.7 : 1,
               cursor: salvando ? 'not-allowed' : 'pointer'
@@ -98,18 +98,22 @@ export default function ConfirmacaoPage() {
   )
 }
 
-function makeStyles(design) {
+function makeStyles(ui) {
+  const { design, backgroundColor, backgroundImage, tema } = ui
   return {
     container: {
       minHeight: '100vh',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      padding: designSpacing.xGrande(design)
+      padding: designSpacing.xGrande(design),
+      background: backgroundImage
+        ? `url(${backgroundImage}) center/cover no-repeat`
+        : backgroundColor || tema.corFundo
     },
     content: {
       width: '100%',
-      maxWidth: '420px',
+      maxWidth: designDimensions.contentMaxWidth(design),
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

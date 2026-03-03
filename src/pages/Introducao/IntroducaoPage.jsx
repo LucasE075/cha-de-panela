@@ -28,9 +28,9 @@ export default function IntroducaoPage() {
   const corFundo = ui?.tema?.corFundo || '#ffffff'
 
   return (
-    <div style={makeStyles(ui.design).container}>
-      <div style={makeStyles(ui.design).content}>
-        <div style={makeStyles(ui.design).titleWrapper}>
+    <div style={makeStyles(ui).container}>
+      <div style={makeStyles(ui).content}>
+        <div style={makeStyles(ui).titleWrapper}>
           <h1
             className={`txt-title ${styleClass(ui.textos?.titulo)} ${scaleClass(ui.textos?.titulo)}`}
             style={{ color: ui.textos?.titulo?.color || ui.tema.corPrimaria }}
@@ -49,7 +49,7 @@ export default function IntroducaoPage() {
           )}
         </p>
 
-        <div style={makeStyles(ui.design).sessoes}>
+        <div style={makeStyles(ui).sessoes}>
           {(ui.sessoes || []).map((s, idx) => {
             if (!s.ativo) return null
 
@@ -67,7 +67,7 @@ export default function IntroducaoPage() {
               <section
                 key={idx}
                 style={{
-                  ...makeStyles(ui.design).sessao,
+                  ...makeStyles(ui).sessao,
                   backgroundColor: hasBg ? 'transparent' : corFundo,
                   borderColor: corBorda,
                   backgroundImage: bgImage,
@@ -75,12 +75,12 @@ export default function IntroducaoPage() {
                   backgroundPosition: 'center'
                 }}
               >
-                <div style={makeStyles(ui.design).sessaoInner}>
-                  <div style={makeStyles(ui.design).titleWrapper}>
+                <div style={makeStyles(ui).sessaoInner}>
+                  <div style={makeStyles(ui).titleWrapper}>
                     <h2
                       className={`${styleClass(s.titulo)} ${scaleClass(s.titulo)}`}
                       style={{
-                        ...makeStyles(ui.design).sessaoTitulo,
+                        ...makeStyles(ui).sessaoTitulo,
                         color: tituloColor
                       }}
                     >
@@ -91,7 +91,7 @@ export default function IntroducaoPage() {
                   <p
                     className={`${styleClass(s.texto)} ${scaleClass(s.texto)}`}
                     style={{
-                      ...makeStyles(ui.design).sessaoTexto,
+                      ...makeStyles(ui).sessaoTexto,
                       color: textoColor
                     }}
                   >
@@ -103,7 +103,7 @@ export default function IntroducaoPage() {
           })}
         </div>
 
-        <div style={makeStyles(ui.design).botoes}>
+        <div style={makeStyles(ui).botoes}>
           <button
             onClick={() => navigate('/confirmacao')}
             className={`btn-primary ${styleClass(ui.textos?.botaoConfirmar)} ${scaleClass(ui.textos?.botaoConfirmar)}`}
@@ -119,7 +119,7 @@ export default function IntroducaoPage() {
             onClick={() => navigate('/presentes')}
             className={`${styleClass(ui.textos?.botaoPresentes)} ${scaleClass(ui.textos?.botaoPresentes)}`}
             style={{
-              ...makeStyles(ui.design).botaoSecundario,
+              ...makeStyles(ui).botaoSecundario,
               borderColor: ui?.tema?.corPrimaria || '#ccc',
               color: ui.textos?.botaoPresentes?.color || (ui?.tema?.corPrimaria || '#333'),
               background: ui?.tema?.corSecundaria || '#fff'
@@ -133,7 +133,8 @@ export default function IntroducaoPage() {
   )
 }
 
-function makeStyles(design) {
+function makeStyles(ui) {
+  const design = ui
   return {
     container: {
       minHeight: '100vh',

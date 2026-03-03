@@ -80,6 +80,7 @@
 //  ESTRUTURA DE CONFIG ESPERADA NO BANCO
 // ============================================
 
+/* eslint-disable no-unused-vars */
 const configEsperada = {
   "global": {
     "tema": {

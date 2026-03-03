@@ -1,0 +1,3 @@
+# ignore documentation files that are not valid JS
+CONFIG_STRUCTURE.js
+REFACTORING_SUMMARY.js

@@ -56,17 +56,17 @@ export default function IdentificacaoPage() {
   }
 
   return (
-    <div style={makeStyles(ui.design).container}>
-      <div style={makeStyles(ui.design).content}>
+    <div style={makeStyles(ui).container}>
+      <div style={makeStyles(ui).content}>
         {ui.imagens?.headerImageUrl && (
           <img
             src={ui.imagens.headerImageUrl}
             alt="Foto"
-            style={makeStyles(ui.design).headerImage}
+            style={makeStyles(ui).headerImage}
           />
         )}
 
-        <div style={makeStyles(ui.design).titleWrapper}>
+        <div style={makeStyles(ui).titleWrapper}>
           <h1
             className={`txt-title ${styleClass(ui.textos?.titulo)} ${scaleClass(ui.textos?.titulo)}`}
             style={{ color: ui.textos?.titulo?.color || ui.tema.corPrimaria }}
@@ -75,30 +75,30 @@ export default function IdentificacaoPage() {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} style={makeStyles(ui.design).form}>
+        <form onSubmit={handleSubmit} style={makeStyles(ui).form}>
           <input
             placeholder={textValue(ui.textos?.placeholderNome, 'Nome')}
             value={nome}
             onChange={e => setNome(e.target.value)}
             disabled={salvando}
-            style={makeStyles(ui.design).input}
+            style={makeStyles(ui).input}
           />
           <input
             placeholder={textValue(ui.textos?.placeholderSobrenome, 'Sobrenome')}
             value={sobrenome}
             onChange={e => setSobrenome(e.target.value)}
             disabled={salvando}
-            style={makeStyles(ui.design).input}
+            style={makeStyles(ui).input}
           />
           <input
             placeholder={textValue(ui.textos?.placeholderCelular, 'Celular')}
             value={celular}
             onChange={e => setCelular(e.target.value)}
             disabled={salvando}
-            style={makeStyles(ui.design).input}
+            style={makeStyles(ui).input}
           />
 
-          {erro && <p style={makeStyles(ui.design).erro}>{erro}</p>}
+          {erro && <p style={makeStyles(ui).erro}>{erro}</p>}
 
           <button
             type="submit"
@@ -119,14 +119,18 @@ export default function IdentificacaoPage() {
   )
 }
 
-function makeStyles(design) {
+function makeStyles(ui) {
+  const { design, tema, backgroundColor, backgroundImage } = ui
   return {
     container: {
       minHeight: '100vh',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      padding: designSpacing.xGrande(design)
+      padding: designSpacing.xGrande(design),
+      background: backgroundImage
+        ? `url(${backgroundImage}) center/cover no-repeat`
+        : backgroundColor || tema.corFundo
     },
     content: {
       width: '100%',

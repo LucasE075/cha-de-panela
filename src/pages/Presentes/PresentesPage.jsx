@@ -85,9 +85,9 @@ export default function PresentesPage() {
   }
 
   return (
-    <div style={makeStyles(ui.design).container}>
-      <div style={makeStyles(ui.design).topo}>
-        <div style={makeStyles(ui.design).titleWrapper}>
+    <div style={makeStyles(ui).container}>
+      <div style={makeStyles(ui).topo}>
+        <div style={makeStyles(ui).titleWrapper}>
           <h1
             className={`txt-title ${styleClass(ui.textos?.titulo)} ${scaleClass(ui.textos?.titulo)}`}
             style={{ color: ui.textos?.titulo?.color || ui.tema.corPrimaria, margin: 0 }}
@@ -114,13 +114,13 @@ export default function PresentesPage() {
         </button>
       </div>
 
-      <div style={makeStyles(ui.design).grid}>
+      <div style={makeStyles(ui).grid}>
         {presentes.map(presente => {
           const selecionado = idsSelecionados.has(presente.id)
           const indisponivel = idsIndisponiveis.has(presente.id) && presente.tipo !== 'pix_livre'
           const disabled = selecionado || salvandoId === presente.id || indisponivel
           const cor = presente.cor || ui.tema.corPrimaria || '#ddd'
-          const estilo = makeStyles(ui.design)
+          const estilo = makeStyles(ui)
 
           return (
             <div
@@ -187,12 +187,7 @@ export default function PresentesPage() {
   )
 }
 
-function formatarTipo(tipo) {
-  if (tipo === 'fisico') return 'Físico'
-  if (tipo === 'pix_fixo') return 'PIX fixo'
-  if (tipo === 'pix_livre') return 'PIX livre'
-  return tipo || ''
-}
+// helper removed because it's not used anywhere in this file
 
 function formatarBRL(n) {
   const v = Number(n)
@@ -204,7 +199,8 @@ function formatarBRL(n) {
  * Função que cria estilos dinâmicos a partir do design
  * Substitui o objeto styles hardcoded anterior
  */
-function makeStyles(design) {
+function makeStyles(ui) {
+  const design = ui
   const spacing = {
     p: designSpacing.pequeno(design),
     m: designSpacing.medio(design),
@@ -231,7 +227,10 @@ function makeStyles(design) {
       minHeight: '100vh',
       padding: spacing.xg,
       maxWidth: designDimensions.containerMaxWidth(design),
-      margin: '0 auto'
+      margin: '0 auto',
+      background: ui.backgroundImage
+        ? `url(${ui.backgroundImage}) center/cover no-repeat`
+        : ui.backgroundColor || ui.tema.corFundo
     },
     topo: {
       display: 'flex',

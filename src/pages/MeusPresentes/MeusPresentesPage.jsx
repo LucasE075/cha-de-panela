@@ -5,11 +5,12 @@ import { useConvidado } from '../../hooks/useConvidado'
 import {
   listarMeusPresentes,
   confirmarPresentes,
+  confirmarPresente,
   removerPresente
 } from '../../services/presentes.service'
 import { useConfiguracoes } from '../../hooks/useConfiguracoes'
 import { resolveUI, textValue, scaleClass, styleClass } from '../../ui/resolveUI'
-import { designColors, designSpacing, designRadius, designDimensions } from '../../ui/designSystem'
+// removing unused designSystem imports; page uses static styles
 
 export default function MeusPresentesPage() {
   const navigate = useNavigate()
@@ -21,9 +22,63 @@ export default function MeusPresentesPage() {
     [config, convidado]
   )
 
+  const styles = useMemo(() => {
+    const base = {
+      container: {
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '24px'
+      },
+      content: {
+        width: '100%',
+        maxWidth: '980px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '16px',
+        textAlign: 'center'
+      },
+      titleWrapper: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        overflow: 'visible'
+      },
+      cardActions: {
+        marginTop: 8,
+        display: 'flex',
+        justifyContent: 'center'
+      },
+      resumo: {
+        width: '100%',
+        maxWidth: '520px',
+        display: 'flex',
+        gap: '12px',
+        flexWrap: 'wrap',
+        justifyContent: 'center'
+      },
+      resumoItem: {
+        flex: '1 1 200px',
+        border: '1px solid #eee',
+        borderRadius: '12px',
+        padding: '10px 12px',
+        background: '#fff'
+      }
+    }
+
+    // apply global background overrides
+    base.container.background = ui.backgroundImage
+      ? `url(${ui.backgroundImage}) center/cover no-repeat`
+      : ui.backgroundColor || ui.tema.corFundo
+
+    return base
+  }, [ui])
+
   const [presentes, setPresentes] = useState([])
   const [loadingPresentes, setLoadingPresentes] = useState(true)
   const [salvando, setSalvando] = useState(false)
+  const [confirmandoId, setConfirmandoId] = useState(null)
   const [removendoId, setRemovendoId] = useState(null)
 
   // proteção de rota
@@ -70,6 +125,28 @@ export default function MeusPresentesPage() {
       alert('Erro ao confirmar.')
     } finally {
       setSalvando(false)
+    }
+  }
+
+  // confirma apenas um presente e navega conforme o tipo
+  async function confirmarItem(p) {
+    if (!convidado || !p.selecao_id) return
+    try {
+      setConfirmandoId(p.selecao_id)
+      await confirmarPresente(convidado.id, p.selecao_id)
+
+      // navegação condicional
+      if (p.tipo === 'fisico') {
+        navigate('/agradecimento')
+      } else {
+        // todos os outros tipos (pix_fixo/pix_livre) vão para tela de PIX
+        navigate('/pix', { state: { presente: p } })
+      }
+    } catch (e) {
+      console.error(e)
+      alert('Erro ao confirmar o presente.')
+    } finally {
+      setConfirmandoId(null)
     }
   }
 
@@ -136,7 +213,8 @@ export default function MeusPresentesPage() {
           <div style={styles.grid}>
             {presentes.map(p => {
               const nome = p.nome || p.presente_nome || p.presente?.nome || 'Presente'
-              const tipo = p.tipo || p.presente_tipo || p.presente?.tipo || ''
+              // tipo is currently unused; kept for future features
+              // const tipo = p.tipo || p.presente_tipo || p.presente?.tipo || ''
               const cor =
                 p.cor || p.presente_cor || p.presente?.cor || ui.tema.corPrimaria || '#ddd'
               const imagem =
@@ -182,18 +260,40 @@ export default function MeusPresentesPage() {
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => desmarcar(p)}
-                    disabled={desabilitado}
-                    style={{
-                      ...styles.botaoRemover,
-                      opacity: desabilitado ? 0.6 : 1,
-                      cursor: desabilitado ? 'not-allowed' : 'pointer'
-                    }}
-                    title={status !== 'selecionado' ? 'Não é possível remover após confirmar' : ''}
-                  >
-                    {removendoId === idRemover ? 'Removendo...' : 'Remover ❌'}
-                  </button>
+                  <div style={styles.cardActions}>
+                    <button
+                      onClick={() => desmarcar(p)}
+                      disabled={desabilitado || status !== 'selecionado'}
+                      style={{
+                        ...styles.botaoRemover,
+                        opacity: desabilitado ? 0.6 : 1,
+                        cursor: desabilitado ? 'not-allowed' : 'pointer'
+                      }}
+                      title={status !== 'selecionado' ? 'Não é possível remover após confirmar' : ''}
+                    >
+                      {removendoId === idRemover ? 'Removendo...' : 'Remover ❌'}
+                    </button>
+
+                    {status === 'selecionado' && (
+                      <button
+                        onClick={() => confirmarItem(p)}
+                        disabled={confirmandoId === idRemover}
+                        style={{
+                          backgroundColor: ui.tema?.corBotao || '#c59d5f',
+                          color: '#fff',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          marginLeft: 8,
+                          opacity: confirmandoId === idRemover ? 0.7 : 1,
+                          cursor: confirmandoId === idRemover ? 'not-allowed' : 'pointer',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {confirmandoId === idRemover ? 'Confirmando...' : 'Confirmar'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )
             })}
@@ -230,12 +330,17 @@ export default function MeusPresentesPage() {
   )
 }
 
+// formatarTipo was used previously for displaying the type of gift but is
+// not currently referenced anywhere in this component.  Leave the helper
+// commented out in case it's valuable later.
+/*
 function formatarTipo(tipo) {
   if (tipo === 'fisico') return 'Físico'
   if (tipo === 'pix_fixo') return 'PIX fixo'
   if (tipo === 'pix_livre') return 'PIX livre'
   return tipo || ''
 }
+*/
 
 function formatarBRL(n) {
   const v = Number(n)
@@ -243,129 +348,4 @@ function formatarBRL(n) {
   return String(Math.round(v * 100) / 100).replace('.', ',')
 }
 
-const styles = {
-  container: {
-    minHeight: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '24px'
-  },
-  content: {
-    width: '100%',
-    maxWidth: '980px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '16px',
-    textAlign: 'center'
-  },
-  titleWrapper: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    overflow: 'visible'
-  },
 
-  resumo: {
-    width: '100%',
-    maxWidth: '520px',
-    display: 'flex',
-    gap: '12px',
-    flexWrap: 'wrap',
-    justifyContent: 'center'
-  },
-  resumoItem: {
-    flex: '1 1 200px',
-    border: '1px solid #eee',
-    borderRadius: '12px',
-    padding: '10px 12px',
-    background: '#fff'
-  },
-  resumoLabel: { display: 'block', fontSize: 12, opacity: 0.75 },
-  resumoValue: { fontSize: 18 },
-
-  vazio: {
-    width: '100%',
-    maxWidth: '520px',
-    border: '1px solid #eee',
-    borderRadius: '12px',
-    padding: '16px',
-    background: '#fff',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-    alignItems: 'center'
-  },
-
-  grid: {
-    width: '100%',
-    display: 'grid',
-    gap: '14px',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))'
-  },
-
-  card: {
-    border: '2px solid',
-    borderRadius: '14px',
-    overflow: 'hidden',
-    background: '#fff',
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '280px'
-  },
-
-  mediaWrap: {
-    width: '100%',
-    aspectRatio: '16 / 10',
-    background: '#f3f3f3'
-  },
-  media: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    display: 'block'
-  },
-  mediaFallback: {
-    width: '100%',
-    aspectRatio: '16 / 10',
-    opacity: 0.22
-  },
-
-  body: {
-    padding: '12px 12px 0 12px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    flex: 1
-  },
-
-  nome: { lineHeight: 1.2, display: 'block' },
-
-  valor: { margin: 0, fontWeight: 'bold' },
-  status: { margin: 0, fontStyle: 'italic', opacity: 0.9 },
-
-  botaoRemover: {
-    border: 'none',
-    background: 'transparent',
-    color: '#b00020',
-    padding: '12px 14px',
-    fontWeight: 600
-  },
-
-  acoes: {
-    width: '100%',
-    maxWidth: '520px',
-    display: 'flex',
-    gap: '12px',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: '8px'
-  },
-  botaoSecundario: {
-    padding: '12px 16px',
-    borderRadius: '10px',
-    border: '1px solid #ccc',
-    background: '#fff',
-    cursor: 'pointer'
-  }
-}

@@ -61,7 +61,9 @@ const DEFAULT_STYLED_TEXT = {
   style: 'padrao' // padrao | destaque | suave | caps
 }
 
-export function resolveUI(config, pageKey, context = {}) {
+// third argument used by callers will be ignored; kept historically for
+// potential future use but omitted here to keep lint happy.
+export function resolveUI(config, pageKey) {
   const cfg = config || {}
   const global = cfg.global || {}
   const paginas = cfg.paginas || {}
@@ -78,6 +80,16 @@ export function resolveUI(config, pageKey, context = {}) {
   const designPage = mergeDesign({}, page.design)
   const design = { ...designGlobal, ...designPage }
 
+  // background globals (cor ou imagem)
+  const backgroundColor =
+    typeof global.backgroundColor === 'string' && global.backgroundColor.trim()
+      ? global.backgroundColor.trim()
+      : null
+  const backgroundImage =
+    typeof global.backgroundImage === 'string' && global.backgroundImage.trim()
+      ? global.backgroundImage.trim()
+      : null
+
   // textos e imagens: por página
   // (se você quiser permitir "texto global", dá pra adicionar depois)
   const textos = normalizeTextMap(page.textos || {}, tema)
@@ -93,6 +105,8 @@ export function resolveUI(config, pageKey, context = {}) {
     imagens,
     pageKey,
     rawPage: page,
+    backgroundColor,
+    backgroundImage,
     ...extra
   }
 }
@@ -171,7 +185,9 @@ function normalizeStyle(s) {
  * - se vier cor inválida/vazia -> null
  * - (o componente usa: styledText.color || tema.corTexto || '#333')
  */
-function normalizeColor(c, tema) {
+function normalizeColor(c) {
+  // tema argument was removed—it wasn’t needed for normalization and
+  // ESLint flagged it as unused.  Keep logic simple: return trimmed string
   if (typeof c !== 'string') return null
   const t = c.trim()
   if (!t) return null

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useConvidado } from '../../hooks/useConvidado'
 import { useConfiguracoes } from '../../hooks/useConfiguracoes'
 import { resolveUI, textValue, scaleClass, styleClass } from '../../ui/resolveUI'
-import { designColors, designSpacing, designDimensions } from '../../ui/designSystem'
+import { designSpacing, designDimensions } from '../../ui/designSystem' // used by makeStyles
 
 export default function AgradecimentoPage() {
   const navigate = useNavigate()
@@ -26,9 +26,9 @@ export default function AgradecimentoPage() {
   const confirmou = convidado.confirmou_presenca === true
 
   return (
-    <div style={makeStyles(ui.design).container}>
-      <div style={makeStyles(ui.design).content}>
-        <div style={makeStyles(ui.design).titleWrapper}>
+    <div style={makeStyles(ui).container}>
+      <div style={makeStyles(ui).content}>
+        <div style={makeStyles(ui).titleWrapper}>
           <h1
             className={`txt-title ${styleClass(ui.textos?.titulo)} ${scaleClass(ui.textos?.titulo)}`}
             style={{ color: ui.textos?.titulo?.color || ui.tema.corPrimaria }}
@@ -40,7 +40,7 @@ export default function AgradecimentoPage() {
         <p
           className={`${styleClass(confirmou ? ui.textos?.mensagemConfirmou : ui.textos?.mensagemNaoConfirmou)} ${scaleClass(confirmou ? ui.textos?.mensagemConfirmou : ui.textos?.mensagemNaoConfirmou)}`}
           style={{
-            ...makeStyles(ui.design).texto,
+            ...makeStyles(ui).texto,
             color:
               (confirmou
                 ? ui.textos?.mensagemConfirmou?.color
@@ -60,7 +60,7 @@ export default function AgradecimentoPage() {
 
         <p
           className={`${styleClass(ui.textos?.mensagemFinal)} ${scaleClass(ui.textos?.mensagemFinal)}`}
-          style={{ ...makeStyles(ui.design).texto, color: ui.textos?.mensagemFinal?.color || '#333' }}
+          style={{ ...makeStyles(ui).texto, color: ui.textos?.mensagemFinal?.color || '#333' }}
         >
           {textValue(ui.textos?.mensagemFinal, 'Nos vemos em breve!')}
         </p>
@@ -83,14 +83,18 @@ export default function AgradecimentoPage() {
   )
 }
 
-function makeStyles(design) {
+function makeStyles(ui) {
+  const { design, tema, backgroundColor, backgroundImage } = ui
   return {
     container: {
       minHeight: '100vh',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      padding: designSpacing.xGrande(design)
+      padding: designSpacing.xGrande(design),
+      background: backgroundImage
+        ? `url(${backgroundImage}) center/cover no-repeat`
+        : backgroundColor || tema.corFundo
     },
     content: {
       width: '100%',

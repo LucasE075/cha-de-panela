@@ -18,7 +18,7 @@ export async function listarPresentesAtivos() {
 
 /**
  * Retorna Set com ids de presentes que devem ficar indisponíveis na lista:
- * - físico e pix_fechado quando já existe seleção (selecionado ou confirmado)
+ * - físico e pix_fixo quando já existe seleção (selecionado ou confirmado)
  * - pix_livre nunca entra como indisponível
  */
 export async function listarIdsIndisponiveis() {
@@ -43,7 +43,7 @@ export async function listarIdsIndisponiveis() {
 
   for (const row of data || []) {
     const tipo = row?.presente?.tipo
-    if (tipo === 'fisico' || tipo === 'pix_fechado') {
+    if (tipo === 'fisico' || tipo === 'pix_fixo') {
       ids.add(row.presente_id)
     }
   }
@@ -76,7 +76,7 @@ export async function convidadoJaSelecionou(convidadoId, presenteId) {
  * - bloqueia físico se já existir seleção para o presente
  * - evita duplicar seleção do mesmo convidado
  * - insere seleção com status 'selecionado'
- * - valor_final = valor do presente se pix_fechado
+ * - valor_final = valor do presente se pix_fixo
  */
 export async function selecionarPresente(convidadoId, presenteId) {
   // 1) buscar presente (tipo/valor)
@@ -122,7 +122,7 @@ export async function selecionarPresente(convidadoId, presenteId) {
     convidado_id: convidadoId,
     presente_id: presenteId,
     status: 'selecionado',
-    valor_final: presente.tipo === 'pix_fechado' ? presente.valor : null,
+    valor_final: presente.tipo === 'pix_fixo' ? presente.valor : null,
     eh_presente_fisico: ehFisico
   }
 
@@ -189,6 +189,26 @@ export async function confirmarPresentes(convidadoId) {
 
   if (error) {
     console.error('Erro ao confirmar presentes:', error)
+    throw error
+  }
+}
+
+/**
+ * Confirma uma única seleção (status -> confirmado).
+ * Usa o id da seleção (selecoes.id), porque o mesmo presente pode ser
+ * escolhido várias vezes por diferentes convidados em casos de pix livre,
+ * então não podemos atualizar usando presente_id.
+ */
+export async function confirmarPresente(convidadoId, selecaoId) {
+  const { error } = await supabase
+    .from('selecoes')
+    .update({ status: 'confirmado' })
+    .eq('convidado_id', convidadoId)
+    .eq('id', selecaoId)
+    .eq('status', 'selecionado')
+
+  if (error) {
+    console.error('Erro ao confirmar presente:', error)
     throw error
   }
 }
