@@ -1,13 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-// App is located under the "app" subfolder
+import { HashRouter } from 'react-router-dom'
 import App from './app/App.jsx'
 
 import './styles/theme.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter basename={import.meta.env.BASE_URL}>
+  <HashRouter>
     <App />
-  </BrowserRouter>
+  </HashRouter>
 )
