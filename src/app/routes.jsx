@@ -11,21 +11,22 @@ import AdminPresentesPage from '../pages/AdminPresentes/AdminPresentesPage'
 import AdminUIPage from '../pages/AdminUI/AdminUIPage'
 import PixPage from '../pages/Pix/PixPage'
 
-
 export default function AppRoutes() {
   return (
-      <Routes>
-        <Route path="/" element={<IdentificacaoPage />} />
-        <Route path="*" element={<div>404</div>} />
-        <Route path="/introducao" element={<IntroducaoPage />} />
-        <Route path="/presentes" element={<PresentesPage />} />
-        <Route path="/meus-presentes" element={<MeusPresentesPage />} />
-        <Route path="/confirmacao" element={<ConfirmacaoPage />} />
-        <Route path="/agradecimento" element={<AgradecimentoPage />} />
-        <Route path="/pix" element={<PixPage />} />
-        <Route path="/admin/convidados" element={<AdminConvidadosPage />} />
-        <Route path="/admin/presentes" element={<AdminPresentesPage />} />
-        <Route path="/admin/ui" element={<AdminUIPage />} />
-      </Routes>
+    <Routes>
+      <Route path="/" element={<IdentificacaoPage />} />
+      <Route path="introducao" element={<IntroducaoPage />} />
+      <Route path="presentes" element={<PresentesPage />} />
+      <Route path="meus-presentes" element={<MeusPresentesPage />} />
+      <Route path="confirmacao" element={<ConfirmacaoPage />} />
+      <Route path="agradecimento" element={<AgradecimentoPage />} />
+      <Route path="pix" element={<PixPage />} />
+
+      <Route path="admin/convidados" element={<AdminConvidadosPage />} />
+      <Route path="admin/presentes" element={<AdminPresentesPage />} />
+      <Route path="admin/ui" element={<AdminUIPage />} />
+
+      <Route path="*" element={<div>404</div>} />
+    </Routes>
   )
 }
