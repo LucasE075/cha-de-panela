@@ -246,8 +246,6 @@ src/
 │   │   └── IntroducaoPage.jsx     ← ⚠️  PARCIAL (falta finalizar makeStyles)
 │   ├── MeusPresentes/
 │   │   └── MeusPresentesPage.jsx  ← ❌ NÃO REFATORADA (baixa prioridade)
-│   └── Admin*/                     ← ❌ NÃO REFATORADAS (admin, não crítico)
-└── CONFIG_STRUCTURE.js  ← ✅ CRIADO (documentação da estrutura esperada)
-*/
+│   └── Admin*/                     
 
 export { }
