@@ -16,6 +16,7 @@ export default function AppRoutes() {
   return (
       <Routes>
         <Route path="/" element={<IdentificacaoPage />} />
+        <Route path="*" element={<div>404</div>} />
         <Route path="/introducao" element={<IntroducaoPage />} />
         <Route path="/presentes" element={<PresentesPage />} />
         <Route path="/meus-presentes" element={<MeusPresentesPage />} />
