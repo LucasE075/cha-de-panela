@@ -25,7 +25,7 @@ export default function AppRoutes() {
         <Route path="/pix" element={<PixPage />} />
         <Route path="/admin/convidados" element={<AdminConvidadosPage />} />
         <Route path="/admin/presentes" element={<AdminPresentesPage />} />
-        <Route path="/admin/UI" element={<AdminUIPage />} />
+        <Route path="/admin/ui" element={<AdminUIPage />} />
       </Routes>
   )
 }
