@@ -151,8 +151,6 @@ function makeStyles(ui) {
       width: 'min(220px, 70vw)',
       aspectRatio: '1 / 1',
       objectFit: 'cover',
-      borderRadius: designRadius.grande(design),
-      border: `1px solid ${designColors.bordaPrincipal(design)}`
     },
     form: {
       width: '100%',
