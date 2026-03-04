@@ -160,8 +160,7 @@ function makeStyles(ui) {
     },
     input: {
       padding: designSpacing.medio(design),
-      borderRadius: designRadius.medio(design),
-      border: `1px solid ${designColors.bordaSecundaria(design)}`,
+      borderRadius: designRadius.medio(design), 
       width: '100%'
     },
     erro: { color: designColors.erro(design), fontSize: 14, margin: 0 }
